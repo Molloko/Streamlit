@@ -69,10 +69,36 @@ if st.sidebar.button("Динамика чаевых во времени"):
 
 
     st.sidebar.download_button(label='Скачать график',
-                                             data=buf,
-                                             file_name='download png',
+                                      data=buf,
+                                             file_name='динамика по времени png',
                                              mime="image/png"
                                              )
+if st.sidebar.button('Размер счета по дням недели'):
+    required = {"day", "total_bill"}
+    if not required.issubset(df.columns):
+        st.error(f"В CSV должны быть колонки: {required}. Найдено: {set(df.columns)}")
+    else:
+       fig, ax = plt.subplots()
+       sns.barplot(data=df, x="day", y="total_bill", estimator=sum, hue='day', ax=ax)
+       ax.grid(axis='y', alpha=0.3 )
+       ax.set_xlabel('День недели')
+       ax.set_ylabel('Счет всего')
+       st.pyplot(fig)
+
+
+
+       # сохраняем график в формате картинке png, чтобы потом скачать его
+       buf2 = io.BytesIO()
+       fig.savefig(buf2, format="png", dpi=300, bbox_inches="tight")
+       buf2.seek(0)
+
+       st.sidebar.download_button(label='Скачать график',
+                                  data=buf2,
+                                  file_name='размер чаеывх по дням png',
+                                  mime="image/png"
+                                  )
+
+
 
 
 
